@@ -1,0 +1,20 @@
+﻿@model User<MoreInformationAboutUser>
+@{ 
+
+}
+<div>
+    
+    @using (Html.BeginForm("RegistrationUser", "Home"))
+    { 
+    <label>Korisničko ime: </label>@Html.EditorFor(x => x.Name)
+    <br />
+    <lable>Šifra: </lable>@Html.EditorFor(x=> x.PW)
+    <br />
+    <label>Kontakt telefon: </label>@Html.EditorFor(x=> x.Tag.Phone)
+    <br />
+    <label>Adresa: </label>@Html.EditorFor(x => x.Tag.Address)<br />
+    <label>Datum rodjenja: @Html.EditorFor(x=>x.Tag.Birthday)</label><br />
+    <input type="submit" value="submit" />
+    <br />
+    }
+</div>

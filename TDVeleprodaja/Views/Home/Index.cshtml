@@ -1,0 +1,73 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+    
+}
+<style>
+    .Login {
+        position: absolute;
+        left: 37%;
+        display: inline-block;
+        border: 1px solid;
+        text-align: center;
+        height: 25%;
+        top: 35%
+    }
+       .Login .Login_titile {
+            margin-top: 10px;
+            margin-bottom: 10px;
+            font-size: x-large;
+            font-family: system-ui;
+        }
+        .Login .inputs {
+            width: 50%;
+        }
+        .Login .inputs .Username, .Login .inputs .Passwrod{
+            margin-left: 50%;
+            margin-bottom: 10px;
+        }
+        .Login .Login_buttons {
+            display: inline-block;
+            font-size: large;
+            font-family: system-ui;
+        }
+        .Login ._button {
+            margin-top: 10px;
+            width: 100px;
+        }
+    
+</style>
+<div class="Login">
+    <div class="Login_titile">Login</div>
+    <div class="inputs">
+        <input class="Username"  type="text" id="Username" placeholder="Username" />
+        <input class="Passwrod" type="password" id="Password" placeholder="Passwrod" />
+    </div>
+    <div class="Login_buttons">
+        <div class="Register">
+            <a href="/Registracija">Register</a>
+        </div>
+        <div class="_button">
+            <button onclick="Login()">Login</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function Login() {
+        var userName = document.getElementById("Username").value;
+        var password = document.getElementById("Password").value;
+        $.ajax({
+            type: "GET",
+            url: '/Login',
+            data: { Username: userName, Passwrod: password },
+            success: function (s) {
+                if (s == "1") {
+                    window.location.href = "/Shop";
+                }
+                else {
+                    alert(s);
+                }
+            }
+        });
+    }
+</script>
