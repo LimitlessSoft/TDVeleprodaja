@@ -17,7 +17,7 @@ namespace TDVeleprodaja.Controllers
         {
             if(Request.IsLogged())
                 return View(Models.Product<MoreInformationAboutProduct>.Buffer());
-            AR.WebShop.Cart
+
             return Redirect("/Home/Index");
         }
 
