@@ -8,15 +8,16 @@ using System.Threading.Tasks;
 
 namespace TDVeleprodaja.Models
 {
-    public class Product<T>
+    public class Product
     {
-        private static List<Product<T>> _bufferedList = new List<Product<T>>();
+        private static List<Product> _bufferedList = new List<Product>();
         public int ID { get; set; }
+        public string CatalogueID { get; set; }
         public string Name { get; set; }
         public string Unit { get; set; }
         public string Description { get; set; }
         public string Thumbnail { get; set; }
-        public T Tag { get; set; }
+        public Object Tag { get; set; }
 
         static Product()
         {
@@ -29,16 +30,16 @@ namespace TDVeleprodaja.Models
                 }
             });
         }
-        public Product(int ID)
-        {
-            _bufferedList.Where(t => t.ID == ID).FirstOrDefault();
-        }
         public Product()
         {
 
         }
 
 
+        public static Product GetProduct(int id)
+        {
+            return _bufferedList.Where(t => t.ID == id).FirstOrDefault();
+        }
         private static Task __UpdateBuffer()
         {
             return Task.Run(() =>
@@ -47,39 +48,40 @@ namespace TDVeleprodaja.Models
             });
             
         }
-        public static List<Product<T>> Buffer()
+        public static List<Product> BufferedList()
         {
             if (_bufferedList == null || _bufferedList.Count == 0)
                 __UpdateBuffer().Wait();
 
            return _bufferedList;
         }
-        public async static Task<List<Product<T>>> List()
+        public async static Task<List<Product>> List()
         {
             return await Task.Run(() =>
             {
-                List<Product<T>> list = new List<Product<T>>();
+                List<Product> list = new List<Product>();
                 try
                 {
                     using(MySqlConnection con = new MySqlConnection(Program.ConnectionString))
                     {
                         con.Open();
-                        using(MySqlCommand cmd = new MySqlCommand("SELECT ID, NAME, UNIT, THUMBNAIL, DESCRIPTION, TAG FROM PRODUCT", con))
+                        using(MySqlCommand cmd = new MySqlCommand("SELECT ID, CATALOGUEID, NAME, UNIT, THUMBNAIL, DESCRIPTION, TAG FROM PRODUCT", con))
                         {
                             using(MySqlDataReader dt = cmd.ExecuteReader())
                             {
                                 while (dt.Read())
                                 {
-                                    list.Add(new Product<T>()
+                                    list.Add(new Product()
                                     {
                                         ID = Convert.ToInt32(dt["ID"].ToString()),
+                                        CatalogueID = dt["CATALOGUEID"].ToString(),
                                         Name = dt["NAME"].ToString(),
                                         Unit = dt["UNIT"].ToString(),
                                         Thumbnail = dt["THUMBNAIL"].ToString(),
                                         Description = dt["DESCRIPTION"].ToString(),
-                                        Tag = JsonConvert.DeserializeObject<T>(dt["TAG"].ToString())
+                                        Tag = JsonConvert.DeserializeObject(dt["TAG"].ToString())
 
-                                    });
+                                    }); ;
                                 }
                             }
                         }
@@ -87,13 +89,14 @@ namespace TDVeleprodaja.Models
                 }
                 catch(Exception ex)
                 {
-                    list = new List<Product<T>>();
+                    list = new List<Product>();
                     AR.ARDebug.Log(ex.Message);
 
                 }
                 return list;
             });
         }
+        
 
         //DODATI SLIKU
         public Task AddAsync()
@@ -118,7 +121,6 @@ namespace TDVeleprodaja.Models
             });
         }
 
-
         public void Add()
         {
             try
@@ -126,8 +128,9 @@ namespace TDVeleprodaja.Models
                 using (MySqlConnection con = new MySqlConnection(Program.ConnectionString))
                 {
                     con.Open();
-                    using (MySqlCommand cmd = new MySqlCommand("INSERT INTO PRODUCT(NAME, UNIT, DESCRIPTION, TAG) VALUES(@NAME, @UNIT, @DESCRIPTION, @TAG)", con))
+                    using (MySqlCommand cmd = new MySqlCommand("INSERT INTO PRODUCT(CATALOGUEID ,NAME, UNIT, DESCRIPTION, TAG) VALUES(@CATALOGUEID,@NAME, @UNIT, @DESCRIPTION, @TAG)", con))
                     {
+                        cmd.Parameters.AddWithValue("@CATALOGUEID", this.CatalogueID);
                         cmd.Parameters.AddWithValue("@NAME", this.Name);
                         cmd.Parameters.AddWithValue("@UNIT", this.Unit);
                         cmd.Parameters.AddWithValue("@DESCRIPTION", this.Description);
@@ -174,9 +177,10 @@ namespace TDVeleprodaja.Models
             using(MySqlConnection con = new MySqlConnection(Program.ConnectionString))
             {
                 con.Open();
-                using(MySqlCommand cmd = new MySqlCommand("UPDATE PRODUCT SET NAME = @NAME, UNIT = @UNIT, DESCRIPTION = @DESC, TAG = @TAG WHERE ID = @ID", con))
+                using(MySqlCommand cmd = new MySqlCommand("UPDATE PRODUCT SET CATALOGUEID = @CATALOGUEID, NAME = @NAME, UNIT = @UNIT, DESCRIPTION = @DESC, TAG = @TAG WHERE ID = @ID", con))
                 {
                     cmd.Parameters.AddWithValue("@ID", this.ID);
+                    cmd.Parameters.AddWithValue("@STOCKNUMBER", this.CatalogueID);
                     cmd.Parameters.AddWithValue("@NAME", this.Name);
                     cmd.Parameters.AddWithValue("@UNIT", this.Unit);
                     cmd.Parameters.AddWithValue("@DESC", this.Description);

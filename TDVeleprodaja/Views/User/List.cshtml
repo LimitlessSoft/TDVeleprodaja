@@ -1,0 +1,66 @@
+﻿@model List<User<MoreInformationAboutUser>>
+
+<style>
+    .User {
+        max-width: 1500px;
+        margin: auto;
+    }
+
+        .User table {
+            width: 100%;
+        }
+
+            .User table td, .PriceList table th {
+                padding: 5px;
+            }
+
+            .User table tr:nth-child(even) {
+                background: #CCC
+            }
+
+            .User table tr:nth-child(odd) {
+                background: #FFF
+            }
+
+            .User table .head {
+                background-color: #6c757d !important;
+                color: whitesmoke !important;
+            }
+    .btn-table {
+        background-color: greenyellow;
+        margin-left: 20px;
+        margin-top: 20px;
+    }
+</style>
+
+<div class="User">
+    <table>
+        <tr class="head">
+            <th>Id</th>
+            <th>User name</th>
+            <th>Pricelist</th>
+            <th>Tag</th>
+        </tr>
+        @foreach(User<MoreInformationAboutUser> us in Model)
+        {
+            <tr>
+                <th>@us.ID</th>
+                <th>@us.Name</th>
+                <th>@((PriceListType)us.PriceListID)</th>
+                <th>
+                    @if(us.Tag == null)
+                    {
+                        <span>Nema informacija</span>
+                    }
+                    else
+                    {
+                        <span>us.Tag</span>
+                    }
+                </th>
+            </tr>
+        }
+    </table>
+</div>
+<div>
+    <button class="btn-table" onclick="window.location.href='/User/New'">Novi</button>
+</div>

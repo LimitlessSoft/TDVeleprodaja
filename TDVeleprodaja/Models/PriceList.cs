@@ -11,7 +11,8 @@ namespace TDVeleprodaja.Models
     public enum PriceListType
     {
         Silver = 0,
-        Gold = 1
+        Gold = 1,
+        Platinum = 2
     }
     public partial class PriceList
     {
@@ -21,6 +22,7 @@ namespace TDVeleprodaja.Models
         public int ID { get; set; }
         public string Name { get; set; }
         public PriceListType Type { get; set; }
+        private List<PriceList.Item> _Items { get; set; }
 
 
         static PriceList()
@@ -58,6 +60,10 @@ namespace TDVeleprodaja.Models
         }
 
 
+        private static void _UpdateBuffer()
+        {
+            _bufferedList = PriceList.List();
+        }
         private static Task _UpdateBufferAsync()
         {
             return Task.Run(() => 
@@ -69,49 +75,55 @@ namespace TDVeleprodaja.Models
 
         public static List<PriceList> BufferedList()
         {
-            if (_bufferedList == null)
-                _bufferedList = ListAsync().Result;
+            if (_bufferedList == null || _bufferedList.Count == 0)
+                _bufferedList = List();
 
             return _bufferedList;
         }
         public static PriceList GetPriceList(int ID)
         {
+            if (_bufferedList == null || _bufferedList.Count == 0)
+                _UpdateBuffer();
+
             return _bufferedList.Where(t => t.ID == ID).FirstOrDefault();
+        }
+        public static List<PriceList> List()
+        {
+            List<PriceList> list = new List<PriceList>();
+            try
+            {
+                using (MySqlConnection con = new MySqlConnection(Program.ConnectionString))
+                {
+                    con.Open();
+                    using (MySqlCommand cmd = new MySqlCommand("SELECT ID, NAME, TYPE FROM PRICELIST", con))
+                    {
+                        using (MySqlDataReader dt = cmd.ExecuteReader())
+                        {
+                            while (dt.Read())
+                            {
+                                list.Add(new PriceList()
+                                {
+                                    ID = Convert.ToInt32(dt["ID"]),
+                                    Name = dt["NAME"].ToString(),
+                                    Type = (PriceListType)Convert.ToInt32(dt["TYPE"].ToString())
+                                });
+                            }
+                        }
+                    }
+                }
+                return list;
+            }
+            catch (Exception ex)
+            {
+                AR.ARDebug.Log(ex.Message);
+                return new List<PriceList>();
+            }
         }
         public static Task<List<PriceList>> ListAsync()
         {
             return Task.Run(() =>
             {
-                List<PriceList> list = new List<PriceList>();
-                try
-                {
-                    using (MySqlConnection con = new MySqlConnection(Program.ConnectionString))
-                    {
-                        con.Open();
-                        using(MySqlCommand cmd = new MySqlCommand("SELECT ID, NAME, TYPE FROM PRICELIST", con))
-                        {
-                            using(MySqlDataReader dt = cmd.ExecuteReader())
-                            {
-                                while (dt.Read())
-                                {
-                                    list.Add(new PriceList()
-                                    {
-                                        ID = Convert.ToInt32(dt["ID"]),
-                                        Name = dt["NAME"].ToString(),
-                                        Type = (PriceListType)Convert.ToInt32(dt["TYPE"].ToString())
-                                    });
-                                }
-                            }
-                        }
-                    }
-                    return list;
-                }
-                catch(Exception ex)
-                {
-                    AR.ARDebug.Log(ex.Message);
-                    return new List<PriceList>();
-                }
-                
+                return List();
             });
         }
 
@@ -128,7 +140,7 @@ namespace TDVeleprodaja.Models
                         cmd.Parameters.AddWithValue("@TYPE", (int)this.Type);
                         cmd.ExecuteNonQuery();
 
-                        _UpdateBufferAsync();
+                        _UpdateBuffer();
                     }
                 }
             }
@@ -149,7 +161,7 @@ namespace TDVeleprodaja.Models
                         cmd.Parameters.AddWithValue("@ID", this.ID);
                         cmd.ExecuteNonQuery();
                     }
-                    _UpdateBufferAsync();
+                    _UpdateBuffer();
                 }
             }
             catch (Exception ex)
@@ -168,7 +180,7 @@ namespace TDVeleprodaja.Models
                     cmd.Parameters.AddWithValue("@TYPE", (int)this.Type);
                     cmd.Parameters.AddWithValue("@ID", this.ID);
                     cmd.ExecuteNonQuery();
-                    _UpdateBufferAsync();
+                    _UpdateBuffer();
                 }
             }
         }
@@ -193,6 +205,26 @@ namespace TDVeleprodaja.Models
             {
                 Update();
             });
+        }
+
+        public void AddItem(Item item)
+        {
+            item.Add();
+            _Items.Add(item);
+        }
+        public PriceList.Item GetItem(int ProductID)
+        {
+            if (_Items == null || _Items.Count == 0)
+                _Items = Item.BufferedList(ID);
+
+            return _Items.Where(x => x.ProductID == ProductID).FirstOrDefault();
+        }
+        public List<PriceList.Item> GetItems()
+        {
+            if (_Items == null)
+                _Items = Item.BufferedList(ID);
+
+            return _Items;
         }
     }
 }

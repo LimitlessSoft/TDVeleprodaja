@@ -5,9 +5,9 @@ using System.Threading.Tasks;
 
 namespace TDVeleprodaja.Models
 {
-    public class Margin
+    public class ProductMargin
     {
-        public string TransportingPackages { get; set; }
-        public int Discount { get; set; }
+        public double TransportingPackages { get; set; }
+        public double Discount { get; set; }
     }
 }

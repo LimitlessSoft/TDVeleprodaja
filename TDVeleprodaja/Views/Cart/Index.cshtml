@@ -1,0 +1,82 @@
+﻿@model AR.WebShop.Cart
+@{ 
+    List<Product> pr = Product.BufferedList();
+    AR.ARWebAuthorization.User currentUser = Context.Request.GetUser();
+    User<MoreInformationAboutUser> currentLocalUser = currentUser.LocalUserClass as TDVeleprodaja.Models.User<MoreInformationAboutUser>;
+
+
+
+}
+<style>
+    .item{
+
+    }
+        .Quantity{
+            width:50px;
+        }
+        .UpdateQuantity {
+            display:none;
+        }
+</style>
+<div>
+    @foreach(AR.WebShop.Cart.Item m in Model.GetItems())
+    {
+    <div class="item" data-productId="@m.ProductID">
+        <span>@pr.Where(t => t.ID == m.ProductID).FirstOrDefault().Name</span>
+        <input onchange="$(this).parent().find('.UpdateQuantity').show()" class="Quantity" type="text" value="@m.Quantity" />&nbsp; @pr.Where(t => t.ID == m.ProductID).FirstOrDefault().Unit <span>Popust: @m.GetDiscount(currentLocalUser.ID) %</span>
+        <button onclick="RemoveItem(@m.ProductID)">Ukloni iz korpe</button>
+        <button class="UpdateQuantity" onclick="UpdateQuantity(@m.ProductID, $(this).parent().find('.Quantity').val())">Sacuvaj promene</button>
+    </div>
+    <br />
+    }
+    <span>Ukupno ostvarena ušteda: @Model.GetDiscountValue(currentLocalUser.ID)</span>
+    <span>Ukupno za naplatu: @Model.GetValueWithDiscount(currentLocalUser.ID)</span>
+</div>
+<button onclick="CloseOrder()">Zakljuci porudzbinu</button>
+<script>
+    function RemoveItem(item) {
+        $.ajax({
+            url: "/Cart/Remove",
+            type: "POST",
+            data: { productID: item },
+            success: function (e) {
+                if (e == "1") {
+                    window.location.reload();
+                }
+            }
+        });
+    }
+
+    function UpdateQuantity(productId, quantitiy) {
+        $.ajax({
+            url: "/Cart/Quantity/Update",
+            type: "POST",
+            data: { productId: productId, newQuantity: quantitiy },
+            success: function (e) {
+                if (e == "1") {
+                    window.location.reload();
+                } else {
+                    alert(e);
+                }
+            }
+        })
+    }
+
+    function CloseOrder() {
+        var cartt = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
+        $.ajax({
+            url: "/Cart/Conclude",
+            type: "POST",
+            data: { cart: cartt },
+            success: function (ex) {
+                if (ex == "1") {
+                    alert("Uspesno ste zakljucili kupovinu!")
+                    window.location.href = "/Home/Index";
+                }
+                else {
+                    alert(ex);
+                }
+            }
+        });
+    }
+</script>

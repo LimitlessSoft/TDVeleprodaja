@@ -30,6 +30,7 @@ namespace TDVeleprodaja.Models
         public int ID { get; set; }
         public string Name { get; set; }
         public string PW { get; set; }
+        public int PriceListID { get; set; }
         public UserType Type { get; set; }
         public T Tag { get; set; }
 
@@ -75,7 +76,7 @@ namespace TDVeleprodaja.Models
                     using (MySqlConnection con = new MySqlConnection(Program.ConnectionString))
                     {
                         con.Open();
-                        using (MySqlCommand cmd = new MySqlCommand("SELECT ID, NAME, PASSWORD,TYPE, TAG FROM USER", con))
+                        using (MySqlCommand cmd = new MySqlCommand("SELECT ID, NAME, PASSWORD, PRICELISTID, TYPE, TAG FROM USER", con))
                         {
                             using (MySqlDataReader dt = cmd.ExecuteReader())
                             {
@@ -86,6 +87,7 @@ namespace TDVeleprodaja.Models
                                         ID = Convert.ToInt32(dt["ID"]),
                                         Name = dt["NAME"].ToString(),
                                         Type = (UserType)Convert.ToUInt32(dt["TYPE"]),
+                                        PriceListID = Convert.ToInt32(dt["PRICELISTID"]),
                                         PW = dt["PASSWORD"].ToString(),
                                         Tag = JsonConvert.DeserializeObject<T>(dt["TAG"].ToString())
                                     });
@@ -147,11 +149,12 @@ namespace TDVeleprodaja.Models
                 using (MySqlConnection con = new MySqlConnection(Program.ConnectionString))
                 {
                     con.Open();
-                    using (MySqlCommand cmd = new MySqlCommand("INSERT INTO USER(NAME, PASSWORD, TYPE, TAG) VALUES(@NAME, @PASSWORD, @TYPE, @TAG)", con))
+                    using (MySqlCommand cmd = new MySqlCommand("INSERT INTO USER(NAME, PASSWORD, PRICELISTID,TYPE, TAG) VALUES(@NAME, @PASSWORD, @PRICELISTID, @TYPE, @TAG)", con))
                     {
                         cmd.Parameters.AddWithValue("@NAME", this.Name);
                         cmd.Parameters.AddWithValue("@PASSWORD", AR.Security.HashPW(this.PW));
                         cmd.Parameters.AddWithValue("@TYPE", (int)this.Type);
+                        cmd.Parameters.AddWithValue("@PRICELISTID", this.PriceListID);
                         cmd.Parameters.AddWithValue("@TAG", JsonConvert.SerializeObject(this.Tag));
                         cmd.ExecuteNonQuery();
 
@@ -191,10 +194,11 @@ namespace TDVeleprodaja.Models
                 using (MySqlConnection con = new MySqlConnection(Program.ConnectionString))
                 {
                     con.Open();
-                    using (MySqlCommand cmd = new MySqlCommand("UPDATE USER SET NAME=@NAME, TYPE=@TYPE, TAG=@TAG WHERE ID = @ID", con))
+                    using (MySqlCommand cmd = new MySqlCommand("UPDATE USER SET NAME=@NAME, TYPE=@TYPE, TAG=@TAG, PRICELISTID = @PRICELISTID WHERE ID = @ID", con))
                     {
                         cmd.Parameters.AddWithValue("@NAME", this.Name);
                         cmd.Parameters.AddWithValue("@TYPE", (int)this.Type);
+                        cmd.Parameters.AddWithValue("@PRICELISTID", this.PriceListID);
                         cmd.Parameters.AddWithValue("@TAG", JsonConvert.SerializeObject(this.Tag));
                     }
                 }

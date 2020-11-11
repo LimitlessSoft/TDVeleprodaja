@@ -1,0 +1,48 @@
+﻿@model Product
+
+@using (Html.BeginForm("Add", "Product"))
+{
+    <label>Catalogue ID: </label>
+    @Html.EditorFor(t => t.CatalogueID);
+    <label>Name: </label>
+    @Html.EditorFor(t => t.Name);
+    <br />
+    <label>Unit: </label>
+    @Html.EditorFor(t => t.Unit);
+    <br />
+    <label>Picture: </label>
+    @Html.EditorFor(t => t.Thumbnail);
+    <br />
+    <label>Description: </label>
+    @Html.EditorFor(t => t.Description);
+    <br />
+    <button type="submit">Sacuvaj</button>
+}
+<div class="Img">
+    <img src="" />
+
+
+    <input type='file' id="someRandomID" />
+    <button onclick='UploadFile()'>Upload</button>
+    <script>
+        function UploadFile() {
+            var fileData = new FormData();
+            fileData.append("files", $("#someRandomID").get(0).files[0]);
+
+            $.ajax({
+                type: "POST",
+                url: "/Product/UploadImage",
+                processData: false,
+                contentType: false,
+                data: fileData,
+                success: function (kk) {
+                    if (kk != "0") {
+                        document.getElementById("Thumbnail").value = kk;
+                    } else {
+                        alert(kk);
+                    }
+                }
+            });
+        }
+    </script>
+</div>
