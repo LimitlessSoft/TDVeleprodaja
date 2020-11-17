@@ -1,0 +1,23 @@
+﻿@model TDVeleprodaja.Models.Order
+@{ 
+    List<TDVeleprodaja.Models.Product> pr = TDVeleprodaja.Models.Product.BufferedList();
+}
+
+<span>Status porudzbine: @Model.Status</span> <br />
+@if(Model.Status == OrderStatus.Obrada)
+{
+   <span>Promeni status na cekam uplatu</span>
+   <button>Promeni</button>
+}
+<div class="Items">
+    @foreach(TDVeleprodaja.Models.Order.Item item in Model.Items)
+    {
+        <span>@pr.Where(t=>t.ID == item.ProductID).FirstOrDefault().Name</span>
+        <span>Kolicina: @item.Discount</span>
+        <span>Cena: @item.Price</span>
+        <span>Popust:  @item.Discount %</span>
+    }
+</div>
+<div class="Ukupno">
+    <spa
+</div>

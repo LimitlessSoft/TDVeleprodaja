@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using AR.TDShop;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -19,6 +18,7 @@ namespace TDVeleprodaja
         {
             AR.ARWebAuthorization.UserTimeoutTime = 20;
             Configuration = configuration;
+            
         }
 
         public IConfiguration Configuration { get; }

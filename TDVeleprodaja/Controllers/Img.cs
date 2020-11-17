@@ -9,17 +9,17 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace TDVeleprodaja.Controllers
 {
-    public class ProbamController : ARNetCoreGallery
+    public class ImgController : ARNetCoreGallery
     {
         public static IHostingEnvironment e;
-        public ProbamController(IHostingEnvironment ev) : base(ev, "img")
+        public ImgController(IHostingEnvironment ev) : base(ev, "img")
         {
 
         }
         
         
         [HttpPost]
-        [Route("/Product/UploadImage")]
+        [Route("/Img/UploadImage")]
         public async Task<IActionResult> Upload(List<IFormFile> files)
         {
             return await Task.Run<IActionResult>(() =>

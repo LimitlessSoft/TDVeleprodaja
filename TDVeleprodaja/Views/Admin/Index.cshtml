@@ -1,0 +1,21 @@
+﻿@{ 
+    ViewData["Title"] = "Control panel";
+    List<User<MoreInformationAboutUser>> users = User<MoreInformationAboutUser>.BufferedList();
+}
+<link href="/css/Admin.css" rel="stylesheet" />
+<div class="Navigacioni-meni">
+    <a class="link" href="/Admin/Podesavanja">Podešavanja sajta</a>
+    <a class="link" href="/Admin/WhiteBoard">White board</a>
+    <a class="link" href="/Admin/TehnickaPodrska">Tehnicka podrska</a>
+</div>
+<h2>Pregled porudzbina na obradi</h2>
+<div class="Poruzdzbine">
+    @foreach(Order order in Order.List().Where(t=>t.Date > DateTime.Now.AddDays(-2) && t.Status == OrderStatus.Obrada))
+    {
+        <div class="Detalji">
+            <span>@users.Where(t=>t.ID == order.UserID).FirstOrDefault().Name</span>
+            <span>@order.Date</span>
+            <button class="btn-veleprodaja" onclick="window.location.href='/Order/@order.ID'">Detalji</button>
+        </div>
+    }
+</div>

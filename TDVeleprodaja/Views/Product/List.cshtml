@@ -2,6 +2,7 @@
 @{
     var currentUser = Context.Request.GetUser();
     var currentLocalUser = currentUser.LocalUserClass as TDVeleprodaja.Models.User<MoreInformationAboutUser>;
+    ViewData["Title"] = "Proizvodi";
 }
 
 
@@ -76,7 +77,7 @@
             Product product = Product.BufferedList().Where(x => x.ID == p.ProductID).FirstOrDefault();
             <tr>
                 <td>@product.CatalogueID</td>
-                <td>@product.Name</td>
+                <td><a href="/Product/@p.ID"> @product.Name</a></td>
                 <td>@p.Price</td>
                 <td>@p.TransportingPackage @product.Unit</td>
                 <td class="ccc">

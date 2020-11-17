@@ -1,0 +1,39 @@
+﻿.link:hover{
+    color:gainsboro;
+
+}
+h2 {
+    margin-left: 15%;
+}
+.Navigacioni-meni {
+    margin-left: 15%;
+    margin-top: 2%;
+    margin-bottom: 2%;
+}
+    .Navigacioni-meni .link {
+        margin-left: 50px;
+        color: black;
+    }
+.Poruzdzbine {
+    background: gainsboro;
+    display: inline-block;
+    border: double 2px;
+    border-color: black;
+    width: 70%;
+    margin-left: 15%;
+    padding: 10px;
+}
+
+    .Poruzdzbine .Detalji {
+        display: inline-block;
+        width: 17%;
+        margin-left: 2%;
+        height: 10%;
+        background-color: gainsboro;
+        border: solid 3px;
+    }
+
+        .Poruzdzbine .Detalji .btn-veleprodaja {
+            margin-left: 35%;
+            display: block;
+        }

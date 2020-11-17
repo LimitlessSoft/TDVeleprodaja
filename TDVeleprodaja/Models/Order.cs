@@ -72,7 +72,7 @@ namespace TDVeleprodaja.Models
                 using (MySqlConnection con = new MySqlConnection(Program.ConnectionString))
                 {
                     con.Open();
-                    using (MySqlCommand cmd = new MySqlCommand("SELECT ID, USERID, DATE, STATUS, PRICE, DESCRIPTION  FROM ORDER_VP", con))
+                    using (MySqlCommand cmd = new MySqlCommand("SELECT ID, USERID, DATE, STATUS, ITEMS  FROM ORDER_VP", con))
                     {
                         using (MySqlDataReader dt = cmd.ExecuteReader())
                         {
@@ -82,8 +82,9 @@ namespace TDVeleprodaja.Models
                                 {
                                     ID = Convert.ToInt32(dt["ID"]),
                                     UserID = Convert.ToInt32(dt["USERID"]),
-                                    Status = (OrderStatus)dt["STATUTS"],
-                                    Items = JsonConvert.DeserializeObject<List<Item>>(dt["DESCRIPTION"].ToString())
+                                    Date = Convert.ToDateTime(dt["DATE"].ToString()),
+                                    Status = (OrderStatus)dt["STATUS"],
+                                    Items = JsonConvert.DeserializeObject<List<Item>>(dt["ITEMS"].ToString())
                                 });
                             }
                         }
@@ -162,12 +163,14 @@ namespace TDVeleprodaja.Models
                 using(MySqlConnection con = new MySqlConnection(Program.ConnectionString))
                 {
                     con.Open();
-                    using(MySqlCommand cmd = new MySqlCommand("INSERT INTO ORDER_VP(USERID, DATE, STATUS, DISCOUNT, PRICE, DESCRIPTION) VALUES(@USERID, @DATE, @STATUS, @DISCOUNT, @PRICE, @DESCRIPTION)", con))
+                    using(MySqlCommand cmd = new MySqlCommand("INSERT INTO ORDER_VP(USERID, DATE, STATUS, DISCOUNT, PRICE, ITEMS) VALUES(@USERID, @DATE, @STATUS, @DISCOUNT, @PRICE, @ITEMS)", con))
                     {
                         cmd.Parameters.AddWithValue("@USERID", this.UserID);
                         cmd.Parameters.AddWithValue("@DATE", this.Date);
                         cmd.Parameters.AddWithValue("@STATUS", (int)this.Status);
-                        cmd.Parameters.AddWithValue("@DESCRIPTION", JsonConvert.SerializeObject(this.Items));
+                        cmd.Parameters.AddWithValue("@ITEMS", JsonConvert.SerializeObject(this.Items));
+                        cmd.Parameters.AddWithValue("@DISCOUNT", this.GetDiscountValue());
+                        cmd.Parameters.AddWithValue("@PRICE", this.GetValueWithDiscount());
                         cmd.ExecuteNonQuery();
                     }
                 }

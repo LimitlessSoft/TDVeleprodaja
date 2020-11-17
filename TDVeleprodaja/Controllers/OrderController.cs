@@ -30,6 +30,12 @@ namespace TDVeleprodaja.Controllers
             
             return View();
         }
+        [Route("/Order/{id}")]
+        public IActionResult Details(int id)
+        {
+            return View(Order.GetOrder(id));
+        }
+
 
     }
 }

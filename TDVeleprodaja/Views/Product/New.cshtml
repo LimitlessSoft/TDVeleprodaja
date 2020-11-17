@@ -1,4 +1,7 @@
 ﻿@model Product
+@{ 
+    ViewData["Title"] = "Novi proizvod";
+}
 
 @using (Html.BeginForm("Add", "Product"))
 {
@@ -22,16 +25,16 @@
     <img src="" />
 
 
-    <input type='file' id="someRandomID" />
+    <input type='file' id="picture" />
     <button onclick='UploadFile()'>Upload</button>
     <script>
         function UploadFile() {
             var fileData = new FormData();
-            fileData.append("files", $("#someRandomID").get(0).files[0]);
+            fileData.append("files", $("#picture").get(0).files[0]);
 
             $.ajax({
                 type: "POST",
-                url: "/Product/UploadImage",
+                url: "/Img/UploadImage",
                 processData: false,
                 contentType: false,
                 data: fileData,

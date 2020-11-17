@@ -184,8 +184,12 @@ namespace TDVeleprodaja.Controllers
                 }
             });
         }
-
-
+       
+        [Route("/Product/{id}")]
+        public IActionResult Details(int id)
+        {
+            return View(Product.BufferedList().Where(t => t.ID == id).FirstOrDefault());
+        }
     
     
     

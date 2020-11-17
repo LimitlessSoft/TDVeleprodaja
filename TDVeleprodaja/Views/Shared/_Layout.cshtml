@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - TDVeleprodaja</title>
+    <title>@ViewData["Title"] - @Program.Name</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -33,6 +33,11 @@
             <a href="/PriceList">Cenovnici</a>
             <a href="/Dsads">Dodaj cenovnik</a>
             <a href="/User/List">Korisnici</a>
+            <a href="/Admin">Control panel</a>
+        }
+        else
+        {
+            <a href="/Order">Prudzbine</a>
         }
     </div>
     @RenderBody()
