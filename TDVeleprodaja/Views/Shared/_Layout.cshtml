@@ -22,12 +22,13 @@
         @if (Context.Request.IsLogged())
         {
             <a href="/">Cenovnik</a>
+            <a href="/Cart" style="float:right;">Korpa</a>
         }
         else
         {
             <a href="/">Login</a>
         }
-        <a href="/Cart" style="float:right;">Korpa</a>
+
         @if (Context.Request.IsAdmin())
         {
             <a href="/PriceList">Cenovnici</a>
@@ -35,7 +36,7 @@
             <a href="/User/List">Korisnici</a>
             <a href="/Admin">Control panel</a>
         }
-        else
+        @if (Context.Request.IsLogged() && !Context.Request.IsAdmin())
         {
             <a href="/Order">Prudzbine</a>
         }

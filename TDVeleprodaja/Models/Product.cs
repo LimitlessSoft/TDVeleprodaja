@@ -128,7 +128,7 @@ namespace TDVeleprodaja.Models
                 using (MySqlConnection con = new MySqlConnection(Program.ConnectionString))
                 {
                     con.Open();
-                    using (MySqlCommand cmd = new MySqlCommand("INSERT INTO PRODUCT(CATALOGUEID ,NAME ,THUMBNAIL ,UNIT, DESCRIPTION, TAG) VALUES(@CATALOGUEID,@NAME, @UNIT, @THUMBNAIL, @DESCRIPTION, @TAG)", con))
+                    using (MySqlCommand cmd = new MySqlCommand("INSERT INTO PRODUCT(CATALOGUEID ,NAME ,THUMBNAIL ,UNIT, DESCRIPTION, TAG) VALUES(@CATALOGUEID,@NAME, @THUMBNAIL, @UNIT, @DESCRIPTION, @TAG)", con))
                     {
                         cmd.Parameters.AddWithValue("@CATALOGUEID", this.CatalogueID);
                         cmd.Parameters.AddWithValue("@NAME", this.Name);

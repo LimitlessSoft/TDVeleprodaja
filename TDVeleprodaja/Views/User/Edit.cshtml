@@ -1,0 +1,68 @@
+﻿@model TDVeleprodaja.Models.User<MoreInformationAboutUser>
+@{ 
+    List<PriceList> priceList = PriceList.BufferedList();
+    if(Model.Tag == null)
+    {
+        Model.Tag = new MoreInformationAboutUser();
+    }
+}
+<script>
+    var user = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
+</script>
+
+<div class="Edit">
+    <div class="Info">
+        <label>Name: </label>
+        <input type="text" value="@Model.Name" onkeyup="user.Name = $(this).val()" />
+    </div>
+
+    <div class="Info">
+        <label>Pricelist: </label>
+        <select class="slect" onchange="user.PriceListID = $(this).val()">
+            @foreach (PriceList p in priceList)
+            {
+                if (p.ID == Model.PriceListID)
+                {
+                    <option value="@p.ID" selected>@p.Name</option>
+                }
+                else
+                {
+                    <option value="@p.ID">@p.Name</option>
+                }
+            }
+        </select>
+    </div>
+
+    <div class="Info">
+        <label>Address: </label>
+        <input type="text" value="@Model.Tag.Address" onkeyup="user.Tag.Address = $(this).val()" />
+    </div>
+
+    <div class="Info">
+        <label>Phone: </label>
+        <input type="text" value="@Model.Tag.Phone" onkeyup="user.Tag.Phone = $(this).val()" />
+    </div>
+
+    <div class="Info">
+        <label>Address: </label>
+        <input type="date" value="@Model.Tag.Birthday" onchange="user.Tag.Birthday = $(this).val()" />
+    </div>
+</div>
+<button onclick="Save()">Save</button>
+<script>
+    function Save() {
+        $.ajax({
+            url: "/User/Update",
+            type: "POST",
+            data: { us: user },
+            success: function (e) {
+                if (e == 1) {
+                    window.location.href = "/User/List"
+                }
+                else {
+                    alert(e);
+                }
+            }
+        });
+    }
+</script>

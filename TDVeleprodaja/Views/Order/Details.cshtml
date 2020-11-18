@@ -10,13 +10,15 @@
    <button>Promeni</button>
 }
 <div class="Items">
-    @foreach(TDVeleprodaja.Models.Order.Item item in Model.Items)
-    {
-        <span>@pr.Where(t=>t.ID == item.ProductID).FirstOrDefault().Name</span>
-        <span>Kolicina: @item.Discount</span>
-        <span>Cena: @item.Price</span>
-        <span>Popust:  @item.Discount %</span>
-    }
+    <div class="Item">
+        @foreach (TDVeleprodaja.Models.Order.Item item in Model.Items)
+        {
+            <span>@pr.Where(t => t.ID == item.ProductID).FirstOrDefault().Name</span>
+            <span>Kolicina: @item.Quantity</span>
+            <span>Cena: @item.Price</span>
+            <span>Popust:  @item.Discount %</span>
+        }
+    </div>
 </div>
 <div class="Ukupno">
     <spa

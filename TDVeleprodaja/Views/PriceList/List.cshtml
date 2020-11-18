@@ -39,6 +39,7 @@
                 <th>ID</th>
                 <th>Name</th>
                 <th>Type</th>
+                <th>Action</th>
             </tr>
             @foreach (PriceList p in Model)
             {
@@ -46,6 +47,7 @@
                     <td>@p.ID</td>
                     <td>@p.Name</td>
                     <td>@p.Type</td>
+                    <td><button onclick="window.location.href='/PriceList/Edit/@p.ID'">Izmeni</button></td>
                 </tr>
             }
         </table>

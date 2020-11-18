@@ -67,6 +67,11 @@ namespace TDVeleprodaja.Controllers
                 }
             });
         }
+        [Route("/PriceList/Edit/{id}")]
+        public IActionResult Edit(int id)
+        {
+            return View(PriceList.BufferedList().Where(t => t.ID == id).FirstOrDefault());
+        }
 
     }
 }

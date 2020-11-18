@@ -1,0 +1,43 @@
+﻿@model PriceList
+@{ 
+    List<PriceList.Item> items = PriceList.Item.BufferedList();
+    List<Product> products = Product.BufferedList();
+    List<User<MoreInformationAboutUser>> users = User<MoreInformationAboutUser>.BufferedList();
+}
+<script>
+    var model = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model))
+</script>
+<div class="Edit">
+    <div class="Info">
+        <label>Name: </label>
+        <input type="text" value="@Model.Name" onkeyup="model.Name = $(this).val()" />
+    </div>
+    <span>Korisnici ove liste: </span>
+    <div class="users">
+        @foreach (User<MoreInformationAboutUser> user in users.Where(t => t.PriceListID == Model.ID))
+        {
+            <span>@user.Name <a href="/PriceList/RemoveUser/@user.ID">Ukloni</a></span>
+        }
+        <br />
+        <button onclick="AddUser()">Dodaj korisnika</button>
+    </div>
+    <span>Proizvodi: </span>
+    <div class="Product">
+        @foreach (PriceList.Item p in items.Where(t => t.PriceListID == Model.ID))
+        {
+
+            <div class="info">
+                <label>Product name: @products.Where(t => t.ID == p.ProductID).FirstOrDefault().Name cena: @p.Price</label> <a href="/PriceListItem/Remove/@p.ID">Ukloni</a>
+            </div>
+        }
+    </div>
+    <div class="newProduct">
+        <button onclick="AddProduct()">Dodaj Proizvod</button>
+    </div>
+</div>
+<script>
+    function AddUser() {
+
+
+    }
+</script>

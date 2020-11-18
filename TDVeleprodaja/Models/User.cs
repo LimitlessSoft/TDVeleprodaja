@@ -194,12 +194,14 @@ namespace TDVeleprodaja.Models
                 using (MySqlConnection con = new MySqlConnection(Program.ConnectionString))
                 {
                     con.Open();
-                    using (MySqlCommand cmd = new MySqlCommand("UPDATE USER SET NAME=@NAME, TYPE=@TYPE, TAG=@TAG, PRICELISTID = @PRICELISTID WHERE ID = @ID", con))
+                    using (MySqlCommand cmd = new MySqlCommand("UPDATE USER SET NAME = @NAME, TYPE = @TYPE, TAG = @TAG, PRICELISTID = @PRICELISTID WHERE ID = @ID", con))
                     {
+                        cmd.Parameters.AddWithValue("@ID", this.ID);
                         cmd.Parameters.AddWithValue("@NAME", this.Name);
                         cmd.Parameters.AddWithValue("@TYPE", (int)this.Type);
                         cmd.Parameters.AddWithValue("@PRICELISTID", this.PriceListID);
                         cmd.Parameters.AddWithValue("@TAG", JsonConvert.SerializeObject(this.Tag));
+                        cmd.ExecuteNonQuery();
                     }
                 }
 

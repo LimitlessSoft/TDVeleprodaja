@@ -42,6 +42,10 @@
             <th>User name</th>
             <th>Pricelist</th>
             <th>Tag</th>
+            @if(Context.Request.IsAdmin())
+            {
+                <th>Action</th>
+            }
         </tr>
         @foreach (User<MoreInformationAboutUser> us in Model)
         {
@@ -56,10 +60,15 @@
                     }
                     else
                     {
-                        <span>us.Tag</span>
+                        <span>@us.Tag.Address</span>
                     }
                 </th>
+                @if (Context.Request.IsAdmin())
+                {
+                    <th><button onclick="window.location.href='/User/Edit/@us.ID'">Izmeni</button></th>
+                }
             </tr>
+
         }
     </table>
 </div>
