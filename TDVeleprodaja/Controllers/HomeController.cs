@@ -14,8 +14,11 @@ namespace TDVeleprodaja.Controllers
 
         public IActionResult Index()
         {
+            if (Request.IsLogged())
+                return Redirect("/Shop");
             return View();
         }
+
         [Route("/Registracija")]
         public IActionResult Registration()
         {

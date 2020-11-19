@@ -1,0 +1,133 @@
+﻿@model TDVeleprodaja.Models.Product
+@{ 
+    List<PriceList.Item> priceListItems = PriceList.Item.BufferedList().Where(t=>t.ProductID == Model.ID).ToList();
+    List<PriceList> priceLists = PriceList.BufferedList();
+    int PriceListID = priceListItems.Where(t => t.ProductID == Model.ID).FirstOrDefault().PriceListID;
+    int ID = priceListItems[0].ID;
+}
+<style>
+    .Product input {
+        border: none;
+        border-bottom: 2px solid rgb(51,51,51);
+        padding: 5px;
+    }
+
+   </style>
+
+<div class="Product">
+    <div class="data">
+        <label>Name: </label>
+        <input onkeypress="$(this).parent().find('button').show()" id="Product_Name_Input" type="text" value="@Model.Name" />
+        <button onclick="UpdateName()">Update</button>
+    </div>
+    <div class="data">
+        <label>Unit :</label>
+        <input onkeypress="$(this).parent().find('button').show()" id="Product_Unit_Input" type="text" value="@Model.Unit" />
+        <button onclick="UpdateUnit()">Update</button>
+    </div>
+    <div class="data">
+        <label>Description :</label>
+        <input onkeypress="$(this).parent().find('button').show()" id="Product_Description_Input" type="text" value="@Model.Description" />
+        <button onclick="UpdateDescription()">Update</button>
+    </div>
+    <div>
+        <label>Pricelist name: <a href="/Shop/PriceList/@PriceListID"> @priceLists.Where(t => t.ID == PriceListID).FirstOrDefault().Name </a></label>
+    </div>
+    <div class="PriceLists">
+        <h3>Price lists</h3>
+        @foreach (PriceList.Item i in priceListItems)
+        {
+            PriceList priceListForThisItem = priceLists.Where(x => x.ID == i.PriceListID).FirstOrDefault();
+
+            <div class="data">
+                <label>Price [ @Html.Raw(priceListForThisItem == null ? "undefined pricelist" : priceListForThisItem.Name) ]:</label>
+                <input onkeypress="$(this).parent().find('button').show()" id="Product_Price_Input" type="text" value="@i.Price" />
+                <button onclick="UpdatePrice(@i.ID)">Update</button>
+            </div>
+            <div class="marg">
+                @if (i.Margins != null)
+                {
+                    @foreach (ProductMargin m in i.Margins)
+                    {
+                        <div class="data">
+                            <label>Margin: </label>
+                            <input class="i333" onkeypress="$(this).parent().find('button').show()" id="Product_Transporting" type="text" value="@m.TransportingPackages" />
+                            <label>Discount</label><input class="iii2" onkeypress="$(this).parent().find('button').show()" id="Product_Discount" type="text" value="@m.Discount" />
+                            <button onclick="MarginSave(this)">Save</button>
+                        </div>
+                    }
+                }
+
+            </div>
+         }
+            <button onclick="AddMargin()">Dodaj marginu</button>
+        </div>
+
+</div>
+
+<script>
+    function UpdateName() {
+        var name = $("#Product_Name_Input").val();
+        $.ajax({
+            type: "GET",
+            url: '/Shop/UpdateName',
+            data: { productID: @Model.ID, newName: name },
+            success: function (s) {
+                alert(s);
+            }
+            });
+    }
+    function UpdateUnit() {
+        var name = $("#Product_Unit_Input").val();
+        $.ajax({
+            type: "GET",
+            url: '/Shop/UpdateUnit',
+            data: { productID: @Model.ID, newUnit: name },
+            success: function (s) {
+                alert(s);
+            }
+            });
+    }
+    function UpdateDescription() {
+        var name = $("#Product_Unit_Input").val();
+        $.ajax({
+            type: "GET",
+            url: '/Shop/UpdateDescription',
+            data: { productID: @Model.ID, newDescription: name },
+            success: function (s) {
+                alert(s);
+            }
+            });
+    }
+    function UpdatePrice(id) {
+        var price = parseFloat($("#Product_Price_Input").val());
+        $.ajax({
+            type: "GET",
+            url: '/Shop/UpdatePrice',
+            data: { PriceListID: id, newPrice: price },
+            success: function (s) {
+                alert(s);
+            }
+            });
+    }
+    function UpdateMargin(id) {
+
+    }
+    function AddMargin() {
+        $(".marg").append('<div class="data"><label>Margin: </label><input class="i333" onkeypress="$(this).parent().find("button").show()" id="Product_Transporting" type="text" value="0" /><label>Discount</label><input class="iii2" onkeypress="$(this).parent().find("button").show()" id="Product_Discount" type="text" value="0" /><button onclick="MarginSave(this)">Save</button></div>');
+    }
+    function MarginSave(t) {
+        var productTransportnig = $(t).parent().find("#Product_Transporting").val();
+        var Discount = $(t).parent().find("#Product_Discount").val();
+        var id = @Html.Raw(ID);
+        $.ajax({
+            url: '/PriceListItem/Margin/Add',
+            type: "POST",
+            data: { ID: id, transportingPackages: productTransportnig, discount: Discount },
+            success: function (k) {
+                alert(k);
+            }
+        });
+    }
+
+</script>

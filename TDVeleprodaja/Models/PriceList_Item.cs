@@ -18,9 +18,9 @@ namespace TDVeleprodaja.Models
             public int PriceListID { get; set; }
             public int ProductID { get; set; }
             public double Price { get; set; }
-            public string TransportingPackage { get; set; }
+            public double TransportingPackage { get; set; }
 
-            public List<Margin> Marings { get; set; }
+            public List<ProductMargin> Margins { get; set; } = new List<ProductMargin>();
 
             static Item()
             {
@@ -36,51 +36,74 @@ namespace TDVeleprodaja.Models
 
             public static List<PriceList.Item> BufferedList()
             {
-                if (_bufferedList == null)
-                    _UpdateBufferAsync();
+                if (_bufferedList == null || _bufferedList.Count == 0)
+                    _bufferedList = List();
                    
                 return _bufferedList;
             }
-            private async static void _UpdateBufferAsync()
+            public static List<PriceList.Item> BufferedList(int PriceListID)
             {
-                _bufferedList = await ListAsync();
+                return BufferedList().Where(x => x.PriceListID == PriceListID).ToList();
             }
-            public async static Task<List<PriceList.Item>> ListAsync()
+            private static void _UpdateBufferAsync()
             {
-                return await Task.Run(() =>
+                Task.Run(() =>
                 {
-                    List<PriceList.Item> list = new List<PriceList.Item>();
-                    try
+                    _bufferedList = ListAsync().Result;
+                });
+                
+            }
+            public static List<PriceList.Item> List()
+            {
+                List<PriceList.Item> list = new List<PriceList.Item>();
+                try
+                {
+                    using (MySqlConnection con = new MySqlConnection(Program.ConnectionString))
                     {
-                        using (MySqlConnection con = new MySqlConnection(Program.ConnectionString))
+                        con.Open();
+                        using (MySqlCommand cmd = new MySqlCommand("SELECT ID, PRICELISTID, PRODUCTID, PRICE, TRANSPORTINGPACKAGE, MARGINS FROM PRICELIST_ITEM", con))
                         {
-                            con.Open();
-                            using (MySqlCommand cmd = new MySqlCommand("SELECT ID, PRICELISTID, PRODUCTID, PRICE, TRANSPORTINGPACKAGE, MARGINS FROM PRICELIST_ITEM", con))
+                            using (MySqlDataReader dt = cmd.ExecuteReader())
                             {
-                                using (MySqlDataReader dt = cmd.ExecuteReader())
+                                while (dt.Read())
                                 {
-                                    while (dt.Read())
+                                    list.Add(new PriceList.Item()
                                     {
-                                        list.Add(new PriceList.Item()
-                                        {
-                                            ID = Convert.ToInt32(dt["ID"]),
-                                            PriceListID = Convert.ToInt32(dt["PRICELISTID"].ToString()),
-                                            ProductID = Convert.ToInt32(dt["PRODUCTID"].ToString()),
-                                            Price = Convert.ToDouble(dt["PRICE"].ToString()),
-                                            TransportingPackage = dt["TRANSPORTINGPACKAGE"].ToString(),
-                                            Marings = JsonConvert.DeserializeObject<List<Margin>>(dt["MARGINS"].ToString())
-                                        });
-                                    }
+                                        ID = Convert.ToInt32(dt["ID"]),
+                                        PriceListID = Convert.ToInt32(dt["PRICELISTID"].ToString()),
+                                        ProductID = Convert.ToInt32(dt["PRODUCTID"].ToString()),
+                                        Price = Convert.ToDouble(dt["PRICE"].ToString()),
+                                        TransportingPackage =Convert.ToDouble(dt["TRANSPORTINGPACKAGE"]),
+                                        Margins = JsonConvert.DeserializeObject<List<ProductMargin>>(dt["MARGINS"].ToString())
+                                    });
                                 }
                             }
                         }
-                        return list;
                     }
-                    catch (Exception ex)
-                    {
-                        AR.ARDebug.Log(ex.Message);
-                        return new List<PriceList.Item>();
-                    }
+                    return list;
+                }
+                catch (Exception ex)
+                {
+                    AR.ARDebug.Log(ex.Message);
+                    return new List<PriceList.Item>();
+                }
+            }
+            public static List<PriceList.Item> List(int PriceListID)
+            {
+                return List().Where(x => x.PriceListID == PriceListID).ToList();
+            }
+            public static Task<List<PriceList.Item>> ListAsync()
+            {
+                return Task.Run(() =>
+                {
+                    return List();
+                });
+            }
+            public static Task<List<PriceList.Item>> ListAsync(int PriceListID)
+            {
+                return Task.Run(() =>
+                {
+                    return List().Where(x => x.PriceListID == PriceListID).ToList();
                 });
             }
 
@@ -121,7 +144,7 @@ namespace TDVeleprodaja.Models
                             cmd.Parameters.AddWithValue("@PRODU", this.ProductID);
                             cmd.Parameters.AddWithValue("@PRICE", this.Price);
                             cmd.Parameters.AddWithValue("@TRANSPORT", this.TransportingPackage);
-                            cmd.Parameters.AddWithValue("@MARGINS", JsonConvert.SerializeObject(this.Marings));
+                            cmd.Parameters.AddWithValue("@MARGINS", JsonConvert.SerializeObject(this.Margins));
                             cmd.ExecuteNonQuery();
                             _UpdateBufferAsync();
                         }
@@ -166,7 +189,7 @@ namespace TDVeleprodaja.Models
                             cmd.Parameters.AddWithValue("@PRDID", this.ProductID);
                             cmd.Parameters.AddWithValue("@PRICE", this.Price);
                             cmd.Parameters.AddWithValue("@TRANSP", this.TransportingPackage);
-                            cmd.Parameters.AddWithValue("@MARG", JsonConvert.SerializeObject(this.Marings));
+                            cmd.Parameters.AddWithValue("@MARG", JsonConvert.SerializeObject(this.Margins));
                             cmd.ExecuteNonQuery();
                             _UpdateBufferAsync();
                         }
@@ -178,7 +201,26 @@ namespace TDVeleprodaja.Models
                 }
             }
 
-            
+            /// <summary>
+            /// Returns discount from margins based on input quantity
+            /// </summary>
+            /// <param name="Quantity"></param>
+            /// <returns></returns>
+            public double GetDiscount(double InputQuantity)
+            {
+                if (Margins == null)
+                    return 0;
+
+                double lastDiscount = 0;
+
+                foreach (ProductMargin margin in Margins.OrderBy(x => x.TransportingPackages))
+                    if (InputQuantity > margin.TransportingPackages)
+                        lastDiscount = margin.Discount;
+                    else
+                        break;
+
+                return lastDiscount;
+            }
         }
     }
 }

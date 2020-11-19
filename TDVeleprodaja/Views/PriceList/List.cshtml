@@ -1,0 +1,57 @@
+﻿@model List<PriceList>
+@{ 
+    ViewData["Title"] = "Cenovnici";
+}
+<style>
+    .PriceList {
+        max-width: 1500px;
+        margin: auto;
+    }
+
+        .PriceList table {
+            width: 100%;
+        }
+
+            .PriceList table td, .PriceList table th {
+                padding: 5px;
+            }
+
+            .PriceList table tr:nth-child(even) {
+                background: #CCC
+            }
+
+            .PriceList table tr:nth-child(odd) {
+                background: #FFF
+            }
+            .PriceList table .head {
+                background-color: #6c757d !important;
+                color: whitesmoke !important;
+            }
+    .btn-table {
+        background-color: greenyellow;
+        margin-left: 20px;
+        margin-top: 20px;
+    }
+</style>
+    <div class="PriceList">
+        <table>
+            <tr class="head">
+                <th>ID</th>
+                <th>Name</th>
+                <th>Type</th>
+                <th>Action</th>
+            </tr>
+            @foreach (PriceList p in Model)
+            {
+                <tr>
+                    <td>@p.ID</td>
+                    <td>@p.Name</td>
+                    <td>@p.Type</td>
+                    <td><button onclick="window.location.href='/PriceList/Edit/@p.ID'">Izmeni</button></td>
+                </tr>
+            }
+        </table>
+    </div>
+<div>
+    <button class="btn-table" onclick="window.location.href='/PriceList/New'">Novi</button>
+</div>

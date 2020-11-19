@@ -1,0 +1,36 @@
+[ 6.11.2020. 13:47:42 ] Unknown column 'DESCRIPTION' in 'field list'
+[ 6.11.2020. 13:55:48 ] Unknown column 'DESCRIPTION' in 'field list'
+[ 6.11.2020. 14:34:21 ] Unknown column 'DESCRIPTION' in 'field list'
+[ 6.11.2020. 16:50:57 ] Unable to connect to any of the specified MySQL hosts.
+[ 6.11.2020. 18:31:35 ] System.NullReferenceException: Object reference not set to an instance of an object.
+   at TDVeleprodaja.Extensions.FinishOrder(Cart cart, ARIAuthorizable user) in C:\source\TDVeleprodaja\TDVeleprodaja\Extensions.cs:line 101
+   at TDVeleprodaja.Controllers.CartController.<ConcludeOrder>b__4_0() in C:\source\TDVeleprodaja\TDVeleprodaja\Controllers\CartController.cs:line 93
+[ 6.11.2020. 18:31:39 ] Unknown column 'DESCRIPTION' in 'field list'
+[ 6.11.2020. 18:36:46 ] Unknown column 'DESCRIPTION' in 'field list'
+[ 6.11.2020. 18:36:46 ] Fatal error encountered during command execution.
+[ 6.11.2020. 18:38:19 ] Fatal error encountered during command execution.
+[ 6.11.2020. 18:39:05 ] Fatal error encountered during command execution.
+[ 6.11.2020. 18:42:04 ] Fatal error encountered during command execution.
+[ 6.11.2020. 18:42:04 ] Unknown column 'DESCRIPTION' in 'field list'
+[ 7.11.2020. 13:25:19 ] Collection was modified; enumeration operation may not execute.
+[ 7.11.2020. 13:25:37 ] Timeout in IO operation
+[ 9.11.2020. 15:57:07 ] Field 'thumbnail' doesn't have a default value
+[ 9.11.2020. 15:57:37 ] Field 'thumbnail' doesn't have a default value
+[ 9.11.2020. 15:59:14 ] StartIndex cannot be less than zero. (Parameter 'startIndex')
+[ 17.11.2020. 12:53:09 ] Unknown column 'DESCRIPTION' in 'field list'
+[ 17.11.2020. 12:53:10 ] Fatal error encountered during command execution.
+[ 17.11.2020. 12:53:52 ] Fatal error encountered during command execution.
+[ 17.11.2020. 12:55:18 ] Fatal error encountered during command execution.
+[ 17.11.2020. 12:57:25 ] Unknown column 'DESCRIPTION' in 'field list'
+[ 17.11.2020. 12:57:51 ] Fatal error encountered during command execution.
+[ 17.11.2020. 13:00:24 ] Unknown column 'DESCRIPTION' in 'field list'
+[ 17.11.2020. 13:02:59 ] Unknown column 'DESCRIPTION' in 'field list'
+[ 17.11.2020. 13:05:52 ] Unknown column 'DESCRIPTION' in 'field list'
+[ 17.11.2020. 13:06:11 ] Unknown column 'DESCRIPTION' in 'field list'
+[ 17.11.2020. 13:06:24 ] Unknown column 'DESCRIPTION' in 'field list'
+[ 17.11.2020. 13:06:35 ] Unknown column 'DESCRIPTION' in 'field list'
+[ 17.11.2020. 13:07:52 ] Could not find specified column in results: STATUTS
+[ 17.11.2020. 13:07:52 ] Could not find specified column in results: STATUTS
+[ 17.11.2020. 13:32:25 ] Authentication to host '174.138.184.42' for user 'sysdba' using method 'mysql_native_password' failed with message: Reading from the stream has failed.
+[ 17.11.2020. 16:32:50 ] Field 'thumbnail' doesn't have a default value
+[ 17.11.2020. 16:35:13 ] Field 'thumbnail' doesn't have a default value

@@ -1,0 +1,126 @@
+﻿@model PriceList
+@{
+    var currentUser = Context.Request.GetUser();
+    var currentLocalUser = currentUser.LocalUserClass as TDVeleprodaja.Models.User<MoreInformationAboutUser>;
+    ViewData["Title"] = "Proizvodi";
+}
+
+
+
+<style>
+    .PriceList {
+        max-width: 1500px;
+        margin: auto;
+    }
+
+        .PriceList table {
+            width: 100%;
+        }
+
+            .PriceList table td, .PriceList table th {
+                padding: 5px;
+            }
+
+            .PriceList table tr:nth-child(even) {
+                background: #CCC
+            }
+
+            .PriceList table tr:nth-child(odd) {
+                background: #FFF
+            }
+
+            .PriceList table .head {
+                background-color: #6c757d !important;
+                color: whitesmoke !important;
+            }
+
+            .PriceList table input {
+                padding: 5px;
+            }
+
+            .PriceList table .Actions {
+                text-align: center;
+            }
+
+            .PriceList table .Actions a, .PriceList table .Actions button {
+                border: none;
+                padding: 5px;
+                background-color: #8bc34a;
+                color: whitesmoke;
+                border-radius: 5px;
+                text-decoration: none;
+                margin: 0 10px;
+            }
+
+                .PriceList table .Actions a:hover, .PriceList table .Actions button:hover {
+                    cursor: pointer;
+                    background-color: #8bc39b;
+                    color: whitesmoke;
+                }
+</style>
+
+
+<button onclick="window.location.href='/Product/New'">Novi</button>
+<div class="PriceList">
+    <table>
+        <tr class="head">
+            <th>CatalogueID</th>
+            <th>Name</th>
+            <th>Price</th>
+            <th>Transporting Package (TP)</th>
+            <th>Discounts</th>
+            <th>Order Quantity</th>
+            <th style="text-align: center;">Actions</th>
+        </tr>
+        @foreach (PriceList.Item p in Model.GetItems())
+        {
+            Product product = Product.BufferedList().Where(x => x.ID == p.ProductID).FirstOrDefault();
+            <tr>
+                <td>@product.CatalogueID</td>
+                <td><a href="/Product/@p.ID"> @product.Name</a></td>
+                <td>@p.Price</td>
+                <td>@p.TransportingPackage @product.Unit</td>
+                <td class="ccc">
+                   @foreach(ProductMargin m in p.Margins.OrderBy(t=>t.TransportingPackages))
+                   {
+                       <div class="Trans" data-trans="@m.TransportingPackages">
+                            @m.TransportingPackages - @product.Unit [@m.Discount %]
+                       </div>
+                   }
+                </td>
+                <td><input type="number" min="1" value="1" onkeyup="Transporting(this)"/></td>
+                <td class="Actions">
+                    <button onclick="AddCart($(this).parent().parent().find('input').val(), @p.ID)">Dodaj U Korpu</button>
+                    <script>
+                        function Transporting(t) {
+                            var quantity = parseFloat($(t).val());
+                            var tag;
+                            $(t).parent().parent().find(".ccc").children(".Trans").each(function () {
+                                var k = parseFloat($(this).attr("data-trans"));
+                                if (quantity > k) {
+                                    tag = this;
+                                }
+                            });
+                            $(t).parent().parent().find(".ccc").children(".Trans").css({ "color": "#212529" })
+                            $(tag).css({ "color": "red" });
+                        }
+                        function AddCart(qua, id) {
+                            $.ajax({
+                                url: "/Cart/Add",
+                                type: "POST",
+                                data: { productID: id, quantity: qua },
+                                success: function (ex) {
+                                    alert(ex);
+                                }
+                            });
+                        }
+                    </script>
+                    @if (currentLocalUser.Type == UserType.Administrator)
+                    {
+                        <a href="/Shop/Margin/@p.ID">Izmeni Margine</a>
+                    }
+                </td>
+            </tr>
+        }
+    </table>
+</div>

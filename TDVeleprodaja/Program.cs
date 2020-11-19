@@ -11,6 +11,7 @@ namespace TDVeleprodaja
 {
     public class Program
     {
+        public static string Name = "Veleprodaja";
         public static string ConnectionString = "Server=174.138.184.42;Database=termodom_vp;Uid=sysdba;Pwd=C4cs93&s;Pooling=false;";
         public static void Main(string[] args)
         {
